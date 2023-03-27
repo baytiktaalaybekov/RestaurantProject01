@@ -1,12 +1,10 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class MenuItem {
     @Id
     @SequenceGenerator(name = "menuItem_id_gen"
@@ -23,22 +22,24 @@ public class MenuItem {
     private Long id;
     private String name;
     private String image;
-    private BigDecimal price;
+    private int price;
     private String description;
-    private String isVegetarian;
+    private Boolean isVegetarian;
 
-    @ManyToMany(mappedBy = "menuItems")
+    @ManyToMany(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private List<Cheque> cheques;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private Restaurant restaurant;
 
 
-    @OneToOne
+    @OneToOne(mappedBy = "menuItem",cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private StopList stopList;
 
-   @ManyToOne
-    private Subcategory subcategory;
+   @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    private SubCategory subcategory;
+
+
 
 
 }

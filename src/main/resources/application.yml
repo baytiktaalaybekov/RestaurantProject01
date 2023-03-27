@@ -11,4 +11,6 @@ spring:
     secret_key: 'key'
 
 server:
-    port: 8080
+  port: 8080
+  error:
+    include-message: always

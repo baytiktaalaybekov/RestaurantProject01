@@ -20,7 +20,7 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails){
         return JWT.create()
-                .withClaim("username",userDetails.getUsername())
+                .withClaim("email",userDetails.getUsername())
                 .withIssuedAt(new Date())
                 .withExpiresAt(Date.from(ZonedDateTime.now().plusMinutes(60).toInstant()))
                 .sign(Algorithm.HMAC256(SECRET_KEY));
@@ -31,7 +31,7 @@ public class JwtUtil {
                 .require(Algorithm.HMAC256(SECRET_KEY))
                 .build();
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("username").asString();
+        return jwt.getClaim("email").asString();
     }
 
 

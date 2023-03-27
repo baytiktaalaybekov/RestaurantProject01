@@ -1,10 +1,7 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class StopList {
     @Id
     @SequenceGenerator(name = "stopList_id_gen"
@@ -23,7 +21,7 @@ public class StopList {
     private String reason;
     private LocalDate date;
 
-    @OneToOne(mappedBy = "stopList")
+    @OneToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private MenuItem menuItem;
 
 }

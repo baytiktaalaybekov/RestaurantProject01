@@ -1,8 +1,8 @@
 package peaksoft.service;
 
 import peaksoft.dto.request.RestaurantRequest;
-import peaksoft.dto.respose.RestaurantResponse;
-import peaksoft.dto.respose.SimpleResponse;
+import peaksoft.dto.response.RestaurantResponse;
+import peaksoft.dto.response.SimpleResponse;
 
 import java.util.List;
 

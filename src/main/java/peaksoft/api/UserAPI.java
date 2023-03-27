@@ -1,9 +1,10 @@
 package peaksoft.api;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.UserRequest;
-import peaksoft.dto.respose.SimpleResponse;
-import peaksoft.dto.respose.UserResponse;
+import peaksoft.dto.response.*;
 
 import peaksoft.service.UserService;
 
@@ -20,25 +21,25 @@ public class UserAPI {
     }
 
     @PostMapping("/login")
-    public UserResponse login(@RequestBody UserRequest userRequest) {
+    public UserResponse login(@RequestBody  UserRequest userRequest) {
         return userService.authenticate(userRequest);
-
+//        @Valid
     }
 
 
     @GetMapping
-    public List<UserResponse> getAllUserResponse(){
+    public List<UserResponses> getAllUserResponse(){
         return userService.getAllUsers();
     }
 
 
-    @PostMapping("/{id}")
-    public SimpleResponse saveUser(@PathVariable Long id, @RequestBody UserRequest userRequest){
-       return userService.save(id, userRequest);
+    @PostMapping()
+    public SimpleResponse saveUser( @RequestBody UserRequest userRequest){
+       return userService.save( userRequest);
     }
 
     @GetMapping("/{userResponseId}")
-    public UserResponse getUserById(@PathVariable Long userResponseId){
+    public UserResponses getUserById(@PathVariable Long userResponseId){
         return userService.getUserResponseById(userResponseId);
     }
 
@@ -52,7 +53,10 @@ public class UserAPI {
         return userService.deleteUser(userResponseId);
     }
 
+    @GetMapping("/pagination")
+    public UserPaginationResponse getUserResponse(@RequestParam int page,
+                                                        @RequestParam int size) {
+        return userService.getUserResponse(page, size);
 
-
-
+    }
 }

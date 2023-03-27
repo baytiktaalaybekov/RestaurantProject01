@@ -1,10 +1,7 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +16,7 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class User implements UserDetails {
     @Id
     @SequenceGenerator(name = "user_id_gen"
@@ -47,11 +45,11 @@ public class User implements UserDetails {
 
     private int experience;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private Restaurant restaurant;
 
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Cheque> cheques;
 
 
@@ -89,6 +87,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
 
 }

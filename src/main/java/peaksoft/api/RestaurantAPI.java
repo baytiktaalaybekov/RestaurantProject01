@@ -3,8 +3,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.RestaurantRequest;
-import peaksoft.dto.respose.RestaurantResponse;
-import peaksoft.dto.respose.SimpleResponse;
+import peaksoft.dto.response.RestaurantResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.RestaurantService;
 
 import java.util.List;

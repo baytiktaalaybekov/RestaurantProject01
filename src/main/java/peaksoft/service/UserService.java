@@ -3,8 +3,10 @@ package peaksoft.service;
 
 import peaksoft.dto.request.UserRequest;
 import peaksoft.dto.request.UserResumeRequest;
-import peaksoft.dto.respose.SimpleResponse;
-import peaksoft.dto.respose.UserResponse;
+import peaksoft.dto.response.SimpleResponse;
+import peaksoft.dto.response.UserPaginationResponse;
+import peaksoft.dto.response.UserResponse;
+import peaksoft.dto.response.UserResponses;
 
 
 import javax.crypto.BadPaddingException;
@@ -14,11 +16,11 @@ public interface UserService {
 
     UserResponse authenticate(UserRequest userRequest);
 
-    SimpleResponse save(Long restaurantId,UserRequest userRequest);
+    SimpleResponse save(UserRequest userRequest);
 
-    List<UserResponse> getAllUsers();
+    List<UserResponses> getAllUsers();
 
-    UserResponse getUserResponseById(Long id);
+    UserResponses getUserResponseById(Long id);
 
     SimpleResponse update(Long id,UserRequest userRequest);
 
@@ -26,4 +28,5 @@ public interface UserService {
 
     SimpleResponse resume(UserResumeRequest userResumeRequest) throws BadPaddingException;
 
+    UserPaginationResponse getUserResponse(int page,int size);
 }

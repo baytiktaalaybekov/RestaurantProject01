@@ -1,13 +1,12 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Entity
 @Table(name = "categories")
@@ -15,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Category {
     @Id
     @SequenceGenerator(name = "category_id_gen"
@@ -23,6 +23,12 @@ public class Category {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "categories")
-    private List<Subcategory> subcategories=new ArrayList<>();
+    @OneToMany(mappedBy = "categories",cascade = {ALL},fetch = FetchType.EAGER)
+    private List<SubCategory> subcategories=new ArrayList<>();
+
+
+    public void addSubCategory(SubCategory subCategory)
+    {
+        subcategories.add(subCategory);
+    }
 }

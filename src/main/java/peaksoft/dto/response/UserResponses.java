@@ -1,11 +1,10 @@
-package peaksoft.dto.respose;
+package peaksoft.dto.response;
 
 import peaksoft.enums.Role;
 
 import java.time.LocalDate;
 
 public record UserResponses(
-
         Long id,
         String firstName,
         String lastName,
@@ -15,6 +14,5 @@ public record UserResponses(
         String phoneNumber,
         Role role,
         int experience
-
 ) {
 }

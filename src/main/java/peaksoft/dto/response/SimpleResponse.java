@@ -1,4 +1,4 @@
-package peaksoft.dto.respose;
+package peaksoft.dto.response;
 
 import lombok.Builder;
 import org.springframework.http.HttpStatus;

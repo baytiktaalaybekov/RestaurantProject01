@@ -1,7 +1,11 @@
 package peaksoft.service.Impl;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,12 +14,13 @@ import org.springframework.stereotype.Service;
 import peaksoft.config.jwt.JwtUtil;
 import peaksoft.dto.request.UserRequest;
 import peaksoft.dto.request.UserResumeRequest;
-import peaksoft.dto.respose.SimpleResponse;
-import peaksoft.dto.respose.UserResponse;
+import peaksoft.dto.response.*;
 
+import peaksoft.entity.Category;
 import peaksoft.entity.Restaurant;
 import peaksoft.entity.User;
 import peaksoft.enums.Role;
+import peaksoft.exception.BadRequestException;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.UserService;
@@ -26,6 +31,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Slf4j
 public class UserSerImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -73,39 +79,42 @@ public class UserSerImpl implements UserService {
     }
 
     @Override
-    public SimpleResponse save(Long restaurantId, UserRequest userRequest) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
-                () -> new NoSuchElementException("Restaurant with id: " + restaurantId + " is not found!"));
-        User user = new User();
-        user.setEmail(userRequest.email());
-        user.setPassword(userRequest.password());
-        user.setRestaurant(restaurant);
-        restaurant.addUser(user);
-        userRepository.save(user);
-
+    public SimpleResponse save( UserRequest userRequest) {
+        Restaurant restaurant = restaurantRepository.findById(userRequest.restaurantId()).orElseThrow(
+                () -> new NoSuchElementException("Restaurant with id: " + userRequest.restaurantId() + " is not found!"));
         var count = restaurant.getUsers().size();
         if (count > 15) {
-            throw new RuntimeException("NETU VAKANSI");
+            throw new BadRequestException("NOT VACANCY!");
         }
+            User user = new User();
+            user.setFirstName(userRequest.firstName());
+            user.setLastName(userRequest.lastName());
+            user.setEmail(userRequest.email());
+            user.setPassword(passwordEncoder.encode("waiter"));
+            user.setRole(Role.WAITER);
+            user.setPassword(passwordEncoder.encode("chef"));
+            user.setRole(Role.CHEF);
 
-        restaurant.addUser(user);
-        user.setRestaurant(restaurant);
-        userRepository.save(user);
-        restaurant.setNumberOfEmployees((byte) ++count);
-        restaurantRepository.save(restaurant);
+            restaurant.addUser(user);
+            user.setRestaurant(restaurant);
+            userRepository.save(user);
+            restaurant.setNumberOfEmployees((byte) ++count);
+            restaurantRepository.save(restaurant);
+
         return SimpleResponse.builder().status(HttpStatus.OK).
                 message(String.format("Employee with fullName : %s job title: %s " +
                                 "successfully saved",
                         user.getFirstName().concat(user.getLastName()), user.getRole())).build();
+
     }
 
     @Override
-    public List<UserResponse> getAllUsers() {
+    public List<UserResponses> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
     @Override
-    public UserResponse getUserResponseById(Long id) {
+    public UserResponses getUserResponseById(Long id) {
         return userRepository.getUsersResponsesById(id);
 
     }
@@ -152,7 +161,7 @@ public class UserSerImpl implements UserService {
             }
 
         }else {
-            throw  new BadPaddingException();
+            throw  new BadRequestException();
         }
         return SimpleResponse.builder().status(HttpStatus.OK).
                 message(String.format("Employee with fullName : %s " +
@@ -160,10 +169,28 @@ public class UserSerImpl implements UserService {
                         user.getFirstName().concat(" ").concat(user.getLastName()))).build();
     }
 
+    @Override
+    public UserPaginationResponse getUserResponse(int page, int size) {
+        PageRequest pageable= PageRequest.of(page-1,size, Sort.by(""));
+        Page<User> pageUser = userRepository.findAll(pageable);
+        UserPaginationResponse userPaginationResponse = new UserPaginationResponse();
+        userPaginationResponse.setUsers(pageUser.getContent());
+        userPaginationResponse.setCurrentPage(pageable.getPageNumber()+1);
+        userPaginationResponse.setPageSize(pageUser.getTotalPages());
+        return userPaginationResponse;
+    }
+
+
     @PostConstruct
     public void saveAdmin() {
         User user = new User();
+        user.setFirstName("Baytik");
+        user.setLastName("Taalaybekov");
         user.setEmail("admin@gmail.com");
+        user.setPassword("admin");
+        user.setDateOfBirth(LocalDate.parse("2002-06-16"));
+        user.setExperience(4);
+        user.setPhoneNumber("+996707255474");
         user.setRole(Role.ADMIN);
         user.setPassword(passwordEncoder.encode("admin"));
         if (!userRepository.existsByEmail(user.getEmail())) {
