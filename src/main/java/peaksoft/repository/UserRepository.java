@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import peaksoft.dto.response.UserApplicationResponse;
 import peaksoft.dto.response.UserResponse;
 import peaksoft.dto.response.UserResponses;
 import peaksoft.entity.SubCategory;
@@ -21,10 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select new peaksoft.dto.response.UserResponses(u.id,u.firstName,u.lastName,u.dateOfBirth,u.email,u.password,u.phoneNumber,u.role,u.experience) from User u")
     List<UserResponses> getAllUsers();
-
     @Query("select new peaksoft.dto.response.UserResponses(u.id,u.firstName,u.lastName,u.dateOfBirth,u.email,u.password,u.phoneNumber,u.role,u.experience) from User u where u.id=?1")
     UserResponses getUsersResponsesById(Long id);
-
+    @Query("select new peaksoft.dto.response.UserResponses(u.id,u.firstName,u.lastName,u.dateOfBirth,u.email,u.password,u.phoneNumber,u.role,u.experience) from User u where u.restaurant.id=null ")
+    List<UserResponses> findAllByUserResume();
 
     @Override
     Page<User> findAll(Pageable pageable);
